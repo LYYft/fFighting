@@ -2,7 +2,7 @@
  * @Author: Junk Chen junkchen@vip.qq.com
  * @Date: 2023-11-12 16:33:04
  * @LastEditors: Junk Chen junkchen@vip.qq.com
- * @LastEditTime: 2024-01-10 15:02:38
+ * @LastEditTime: 2024-03-03 16:09:18
  * @FilePath: \SXprogram\src\views\layout\Layout.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -13,9 +13,19 @@ HomeFilled,
 StarFilled,
 UploadFilled
 }
-  from '@element-plus/icons-vue'
+from '@element-plus/icons-vue'
 import { ref } from 'vue'
-var input = ref('')
+import { GetSortList } from '../../api/SortRent'
+
+const input = ref('')
+const sortlist = ref([]) 
+//获取分类列表
+const GetSort = async () => {
+  sortlist.value = (await GetSortList()).data.data
+}
+GetSort()
+
+// const avatarUrl = ref('https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png')
 </script>
 
 <template>
@@ -28,12 +38,14 @@ var input = ref('')
       <div>
         <el-input v-model="input" :suffix-icon="Search" size="small"></el-input>
       </div>
-      <div>登入</div>
+      <el-avatar :size="55">
+      <img src="../../assets/image/avatar5.jpg">  
+      </el-avatar>
     </div>
     <div class="content">
       <div class="left">
         <el-menu :default-active="$route.path" router style="height: 100%;">
-          <el-sub-menu index="/prime">
+          <el-sub-menu index="`/prime/${sortname}`">
             <template #title>
               <el-icon>
                 <HomeFilled></HomeFilled>
@@ -44,9 +56,9 @@ var input = ref('')
               <template #title>
                 <span>分类</span>
               </template>
-              <el-menu-item>骑行</el-menu-item>
-              <el-menu-item>书籍</el-menu-item>
-              <el-menu-item>电子产品</el-menu-item>
+              <el-menu-item index="/cycling">骑行</el-menu-item>
+              <el-menu-item index="/book">书籍</el-menu-item>
+              <el-menu-item index="/electronics">电子产品</el-menu-item>
             </el-sub-menu>
           </el-sub-menu>
           <el-menu-item index="/upload">
@@ -64,7 +76,9 @@ var input = ref('')
         </el-menu>
       </div>
       <div class="right">
-        <router-view></router-view>
+        <router-view>
+          
+        </router-view>
       </div>
 
     </div>
@@ -136,6 +150,8 @@ var input = ref('')
       flex: 1;
       margin-left: 20px;
       background-color: white;
+      display: flex;
+      flex-direction: column;
     }
   }
 }</style>

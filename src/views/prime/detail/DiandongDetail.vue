@@ -2,40 +2,39 @@
  * @Author: Junk Chen junkchen@vip.qq.com
  * @Date: 2023-11-26 21:23:37
  * @LastEditors: Junk Chen junkchen@vip.qq.com
- * @LastEditTime: 2024-01-18 17:26:43
+ * @LastEditTime: 2024-01-18 17:25:06
  * @FilePath: \SXprogram\src\views\prime\DetailRent.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { GetPhoneList } from '../../../api/GoodsRent';
+import { GetDianDongList } from '../../../api/GoodsRent';
 const route = useRoute()
-const phoneDetail = ref({})
+const diandongDetail = ref({})
 const index = route.params.id - 1
-const phonelist = ref([])
-const GetPhoneMessage = async () => {
-  phonelist.value = (await GetPhoneList()).data.data;
-  phoneDetail.value = phonelist.value[index]
+const diandonglist = ref([])
+const GetDianDongMessage = async () => {
+    diandonglist.value = (await GetDianDongList()).data.data;
+    diandongDetail.value = diandonglist.value[index]
 }
-GetPhoneMessage()
+GetDianDongMessage()
 </script>
 
 <template>
     <div class="detail">
         <div class="detailContent">
             <div class="leftBox">
-                <img :src="'../../../../' + `${phoneDetail.img}`">
+                <img :src="'../../../../' + `${diandongDetail.img}`">
             </div>
             <div class="rightBox">
-                <h3>{{ phoneDetail.name }}</h3>
+                <h3>{{ diandongDetail.name }}</h3>
                 <ul>
-                    <li>内存：<span>{{ phoneDetail.memory }}</span></li>
-                    <li>颜色：<span>{{ phoneDetail.color }}</span></li>
+                    <li>颜色：<span>{{ diandongDetail.color }}</span></li>
                     <li>租期：<span>12个月</span></li>
                     <li>
-                        <span>租金：<span>￥{{ phoneDetail.price }}/月</span></span>&nbsp;
-                        <span>日租金：<span>￥{{ (phoneDetail.price / 30).toFixed(2) }}/天</span></span>
+                        <span>租金：<span>￥{{ diandongDetail.price }}/月</span></span>&nbsp;
+                        <span>日租金：<span>￥{{ (diandongDetail.price / 30).toFixed(2) }}/天</span></span>
                     </li>
                 </ul>
             </div>

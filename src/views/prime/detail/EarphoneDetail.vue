@@ -2,33 +2,43 @@
  * @Author: Junk Chen junkchen@vip.qq.com
  * @Date: 2023-12-11 22:42:15
  * @LastEditors: Junk Chen junkchen@vip.qq.com
- * @LastEditTime: 2024-01-10 15:41:50
+ * @LastEditTime: 2024-01-18 00:07:17
  * @FilePath: \SXprogram\src\views\prime\detail\EarphoneDetail.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { GetEarList } from '../../../api/GoodsRent';
 const route = useRoute()
-const earphoneDetail = ref(route.query)
+const earphoneDetail = ref({})
+const index = route.params.id - 1
+const earlist = ref([])
+const GetEarMessage = async () => {
+  earlist.value = (await GetEarList()).data.data;
+  earphoneDetail.value = earlist.value[index]
+  console.log(earphoneDetail.value);
+  console.log(earphoneDetail.value.img);
+}
+GetEarMessage()
 </script>
 
 <template>
     <div class="detail">
         <div class="detailContent">
             <div class="leftBox">
-                <img :src="earphoneDetail.image">
+                <img :src="'../../../../' + `${earphoneDetail.img}`">
             </div>
             <div class="rightBox">
-                <h3>商品名称</h3>
+                <h3>{{ earphoneDetail.name }}</h3>
                 <ul>
-                    <li>类型：<span>无线狼牙耳机</span></li>
-                    <li>颜色：<span>黑</span></li>
+                    <li>类型：<span>{{ earphoneDetail.styling }}</span></li>
+                    <li>颜色：<span>{{ earphoneDetail.color }}</span></li>
                     <li>租期：<span>12个月</span></li>
                     <li>
-                        <span>租金：<span>￥132/月</span></span>
+                        <span>租金：<span>￥{{ earphoneDetail.price }}/月</span></span>
                         &nbsp;
-                        <span>日租金：<span>￥4.4/天</span></span>
+                        <span>日租金：<span>￥{{ (earphoneDetail.price / 30).toFixed(2) }}/天</span></span>
                     </li>
                 </ul>
             </div>
@@ -104,4 +114,5 @@ const earphoneDetail = ref(route.query)
             }
         }
     }
-}</style>
+}
+</style>

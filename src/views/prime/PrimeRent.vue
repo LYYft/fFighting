@@ -2,7 +2,7 @@
  * @Author: Junk Chen junkchen@vip.qq.com
  * @Date: 2023-11-12 20:59:04
  * @LastEditors: Junk Chen junkchen@vip.qq.com
- * @LastEditTime: 2024-01-07 14:16:24
+ * @LastEditTime: 2024-02-15 13:57:36
  * @FilePath: \SXprogram\src\views\prime\PrimeRent.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -15,59 +15,112 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Star } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
-import mitt from '@/utils/event-bus.js'
-var goods = ref([
-  {id: 1,type: 'earphone',img: "src/assets/image/earphone2.png",name: '耳机',price: 80,iconColor: 'skyblue' },
-  {id: 2,type: 'earphone',img: "src/assets/image/earphone1.png",name: '耳机',price: '50',iconColor: 'skyblue' },
-  {id: 3,type: 'iphone',img: "src/assets/image/iphone.png",name: 'iphone',price: '3000',iconColor: 'skyblue' },
-  {id: 4,type: 'laptop',img: "src/assets/image/laptop.png",name: '笔记本',price: '500',iconColor: 'skyblue' },
-  {id: 5,type: 'bicycle',img: "src/assets/image/bicycle.png",name: '自行车',price: '30',iconColor: 'skyblue' },
-  {id: 6,type: 'laptop',img: "src/assets/image/laptop1.png",name: 'Dell',price: '500',iconColor: 'skyblue' },
-  {id: 7,type: 'laptop',img: "src/assets/image/huawei.png",name: '华为',price: '1000',iconColor: 'skyblue' },
-  {id: 8,img: "",name: '',price: '',iconColor: 'skyblue' },
-  {id: 9,img: "",name: '',price: '',iconColor: 'skyblue' },
-  {id: 10,img: '',name: '',price: '',iconColor: 'skyblue' },
-  {id: 11,img: '',name: '',price: '',iconColor: 'skyblue' },
-  {id: 12,img: '',name: '',price: '',iconColor: 'skyblue' },
-  {id: 13,img: '',name: '',price: '',iconColor: 'skyblue' },
-  {id: 14,img: '',name: '',price: '',iconColor: 'skyblue' },
-  {id: 15,img: '',name: '',price: '',iconColor: 'skyblue' },
-  {id: 16,img: '',name: '',price: '',iconColor: 'skyblue' },
-])
+import { GetBookList,GetEarList,GetBicycleList,GetCameraList,GetDianDongList,GetLaptopList,GetPhoneList } from '../../api/GoodsRent'
+import { IsLikeBooklist,IsLikeBicyclelist,IsLikeCameralist,IsLikeDiandonglist,IsLikeEarlist,IsLikeLaptoplist,IsLikePhonelist } from '../../api/IsLikeRent'
+const booklist = ref([]);
+const earlist = ref([]);
+const laptoplist = ref([]);
+const diandonglist = ref([]);
+const phonelist = ref([]);
+const bicyclelist = ref([]);
+const cameralist = ref([]);
+const goodslist = ref([])
+//获取书籍列表
+const GetBookMessage = async () => {
+  booklist.value = (await GetBookList()).data.data;
+}
+//获取耳机列表
+const GetEarMessage = async () => {
+  earlist.value = (await GetEarList()).data.data;
+}
+//获取笔记本列表
+const GetLaptopMessage = async () => {
+  laptoplist.value = (await GetLaptopList()).data.data;
+}
+//获取手机列表
+const GetPhoneMessage = async () => {
+  phonelist.value = (await GetPhoneList()).data.data;
+}
+//获取电动车列表
+const GetDianDongMessage = async () => {
+  diandonglist.value = (await GetDianDongList()).data.data;
+}
+//获取相机列表
+const GetCameraMessage = async () => {
+  cameralist.value = (await GetCameraList()).data.data;
+}
+//获取自行车列表
+const GetBicycleMessage = async () => {
+  bicyclelist.value = (await GetBicycleList()).data.data;
+}
+
 //跳转详情页
 const router = useRouter()
-var toDetail = (item) => {
+const toDetail = (item) => {
   switch(item.type)
   {
     case 'bicycle':
-      router.push('/bicycleDetail');
+      router.push(`/bicycleDetail/${item.id}`);
       break;
     case 'earphone':
-      router.push({
-        path: '/earphoneDetail',
-        query: {
-          image: `${item.img}`
-        }
-      });
+      router.push(`/earphoneDetail/${item.id}`);
       break;
     case 'laptop':
-      router.push('/laptopDetail');
-      mitt.emit('sentLaptop',item);
+      router.push(`/laptopDetail/${item.id}`);
       break;
+    case 'book':
+      router.push(`/bookDetail/${item.id}`);
+      break;
+    case 'camera':
+      router.push(`/cameraDetail/${item.id}`);
+      break;
+    case 'diandong':
+      router.push(`/diandongDetail/${item.id}`);
+      break;
+    case 'phone':
+      router.push(`/phoneDetail/${item.id}`);
+      break;  
   }
 }
 
-//另一种跳转详情页方式
+//渲染商品
+onMounted(async () => {
+  await GetEarMessage();
+  await GetBookMessage();
+  await GetLaptopMessage();
+  await GetDianDongMessage();
+  await GetBicycleMessage();
+  await GetPhoneMessage();
+  await GetCameraMessage();
+  goodslist.value = booklist.value.concat(earlist.value,laptoplist.value,phonelist.value,diandonglist.value,bicyclelist.value,cameralist.value);
+  goodslist.value.forEach((ele,index) => {
+  ele.idd = index + 1;
+  })
+})
 
+//是否收藏
+const IsLike = (item) => {
+  item.iconColor = item.iconColor == 'skyblue' ? 'red' : 'skyblue';
+  switch(item.type)
+  {
+    case 'bicycle': IsLikeBicyclelist(item);break;
+    case 'phone': IsLikePhonelist(item);break;
+    case 'book': IsLikeBooklist(item);break;
+    case 'camera': IsLikeCameralist(item);break;
+    case 'diandong': IsLikeDiandonglist(item);break;
+    case 'earphone': IsLikeEarlist(item);break;
+    case 'laptop': IsLikeLaptoplist(item);break;
+  }
+}
 </script>
 
 <template>
-  <div class="prime" >
-    <div class="goods" v-for="item in goods" :key="item.id" @click="toDetail(item)">
-      <el-icon class="icon" :color="item.iconColor" @click.stop="item.iconColor = item.iconColor == 'skyblue' ? 'red' : 'skyblue'"><Star></Star></el-icon>
+  <div class="prime">
+    <div class="goods" v-for="item in goodslist" :key="item.idd" @click="toDetail(item)">
+      <el-icon class="icon" :color="item.iconColor" @click.stop="IsLike(item)"><Star></Star></el-icon>
       <div id="image">
       <img :src=item.img>
       </div>
@@ -75,7 +128,6 @@ var toDetail = (item) => {
       <p>￥{{ item.price }}/月起</p>
     </div>
   </div>
-  
 </template>
 
 <style scoped lang="scss">
@@ -86,9 +138,6 @@ var toDetail = (item) => {
     background-color: #f5f6fa;
     overflow-y: auto;
     overflow-x: hidden;
-    // display: flex;
-    // flex-wrap: wrap;
-    // justify-content: space-between;
     .goods {
       width: 200px;
       height: 300px;
